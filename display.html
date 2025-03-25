@@ -1,17 +1,11 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Generator</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <title>Device Verification</title>
 </head>
 <body>
-    <h2>Generate QR Code</h2>
-    <label for="subject">Enter Subject:</label>
-    <input type="text" id="subject" placeholder="Enter subject">
-    <button onclick="generateQR()">Generate QR Code</button>
-    <div id="qrcode"></div>
+    <h2 id="message">Verifying...</h2>
 
     <script>
         async function getIP() {
@@ -25,13 +19,20 @@
             }
         }
 
-        async function generateQR() {
-            let subject = document.getElementById("subject").value;
-            let ownerIP = await getIP();
-            let qrText = `https://mokesh15.github.io/Design-Thinking/display.html?owner_ip=${encodeURIComponent(ownerIP)}&subject=${encodeURIComponent(subject)}`;
-            document.getElementById("qrcode").innerHTML = "";
-            new QRCode(document.getElementById("qrcode"), qrText);
+        async function verifyConnection() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const ownerIP = urlParams.get('owner_ip');
+            const subject = urlParams.get('subject');
+            const currentIP = await getIP();
+
+            if (currentIP === ownerIP) {
+                document.getElementById("message").innerHTML = `Connected Successfully! <br> Device IP: ${currentIP} <br> Subject: ${subject}`;
+            } else {
+                document.getElementById("message").innerHTML = "Error: Devices are not connected to the same network.";
+            }
         }
+
+        verifyConnection();
     </script>
 </body>
 </html>
